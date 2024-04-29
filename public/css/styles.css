@@ -1,0 +1,132 @@
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #f0f8ff;
+    font-family: Arial, sans-serif;
+    color: 333;
+  }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1 {
+    text-align: center;
+    color: #0078d7;
+    margin-bottom: 5px;
+  }
+  h2 {
+    text-align: center;
+    color: #0078d7;
+    margin-bottom: 20px;
+  }
+  
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  input[type="text"] {
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .weather-info {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .weather-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+    background-size: cover;
+    background-position: center;
+  }
+
+  .forecast-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  
+  .forecast-item {
+    flex-basis: 17%;
+    padding: 10px;
+    margin-bottom: 20px;
+    background-color: #f0f8ff;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .back-link {
+    display: block;
+    padding: 10px 20px;
+    margin-top: 20px;
+    background-color: #007bff;
+    color: #fff;
+    text-decoration: none;
+    text-align: center;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .back-link:hover {
+    background-color: #0056b3;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .weather-info,
+  .forecast-item {
+    animation: fadeIn 1s ease-out;
+  }
+  
+  @media (max-width: 1200px) {
+    .container {
+      max-width: 100%;
+      padding: 10px;
+    }
+  
+    .forecast-container {
+      flex-wrap: wrap;
+    }
+  
+    .forecast-item {
+      flex-basis: 48%;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .forecast-item {
+      flex-basis: 100%;
+    }
+  }

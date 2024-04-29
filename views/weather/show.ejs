@@ -1,14 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather Result</title>
-</head>
-<body>
-  <h1>Weather in <%= city %></h1>
-  <p>Temperature: <%= temp %>°F</p>
-  <p>Description: <%= desc %></p>
-  <a href="/">Back to home!</a>
-</body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0" />
+        <link
+            rel="stylesheet"
+            href="/css/styles.css" />
+        <title>Weather Result</title>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Weather in <%= city %></h1>
+            <!-- show.ejs -->
+            <div class="weather-info">
+                <img src="http://openweathermap.org/img/w/<%= icon %>.png" alt="<%= desc %>">
+                <p>Temperature: <%= temp %>°F</p>
+                <p>Description: <%= desc %></p>
+                <p>Humidity: <%= humidity %>%</p>
+                <p>Pressure: <%= pressure %> hPa</p>
+                <p>Sunrise: <%= new Date(sunrise * 1000).toLocaleTimeString() %></p>
+                <p>Sunset: <%= new Date(sunset * 1000).toLocaleTimeString() %></p>
+              </div>
+            <a
+                href="/"
+                class="back-link"
+                >Back to home!</a
+            >
+        </div>
+    </body>
 </html>

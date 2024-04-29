@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>5-Day Weather Forecast</title>
+</head>
+<body>
+    <div class="container">
+        <h1>5-Day Forecast for <%= city %></h1>
+        <div class="forecast-container">
+            <% Object.keys(forecastByDate).forEach(function(date) { %>
+            <div class="forecast-item">
+                <p>Date: <%= date %></p>
+                <img src="http://openweathermap.org/img/w/<%= forecastByDate[date].weather[0].icon %>.png" alt="<%= forecastByDate[date].weather[0].description %>">
+                <p>Temperature: <%= forecastByDate[date].main.temp %> °F</p>
+                <p>Description: <%= forecastByDate[date].weather[0].description %></p>
+                <p>Humidity: <%= forecastByDate[date].main.humidity %>%</p>
+                <p>Pressure: <%= forecastByDate[date].main.pressure %> hPa</p>
+            </div>
+            <% }); %>
+        </div>
+        <a href="/" class="back-link">Back to Home</a>
+    </div>
+</body>
+</html>

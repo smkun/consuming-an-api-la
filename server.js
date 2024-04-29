@@ -1,66 +1,88 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const axios = require('axios');
-require('dotenv').config();
+const express = require("express");
+const bodyParser = require("body-parser");
+const axios = require("axios");
+const session = require("express-session");
+require("dotenv").config();
 
-// Retrieve the OpenWeather API key from the environment variables
 const API_KEY = process.env.OpenWeatherAPIKey;
-
-// Create an instance of the Express application
 const app = express();
-
-// Set the port number for the server
 const port = 3002;
 
-// Set the view engine to EJS
-app.set('view engine', 'ejs');
-
-// Set the directory for the views
-app.set('views', __dirname + '/views');
-
-// Parse URL-encoded request bodies
+app.set("view engine", "ejs");
+app.set("views", __dirname + "/views");
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.static("public"));
 
-// Define a route handler for the root URL ("/")
-app.get('/', (req, res) => {
-  // Render the "index" view
-  res.render('index');
+app.use(
+  session({
+    secret: "your-secret-key",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
+
+app.get("/", (req, res) => {
+  res.render("index");
 });
 
-// Start the server and listen on the specified port
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
 });
 
-// Define a route handler for the "/weather" POST request
-app.post('/weather', async (req, res) => {
-  // Extract the zipcode from the request body
-  const zipcode = req.body.zipcode;
-
+app.post("/weather", async (req, res) => {
+  const { zipcode, forecast_type } = req.body;
+  let url = "";
+  if (forecast_type === "five_day") {
+    url = `https://api.openweathermap.org/data/2.5/forecast?zip=${zipcode},us&appid=${API_KEY}&units=imperial`;
+  } else {
+    url = `https://api.openweathermap.org/data/2.5/weather?zip=${zipcode},us&appid=${API_KEY}&units=imperial`;
+  }
   try {
-    // Make a GET request to the OpenWeather API using the provided zipcode
-    const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?zip=${zipcode},us&appid=${API_KEY}&units=imperial`);
-    const weather = response.data;
-
-    // Redirect to the "/weather/show" route with the retrieved weather data as query parameters
-    res.redirect(`/weather/show?city=${weather.name}&temp=${weather.main.temp}&desc=${weather.weather[0].description}`);
+    const response = await axios.get(url);
+    const data = response.data;
+    // Redirect based on type of forecast
+    if (forecast_type === "five_day") {
+      req.session.weatherData = data;
+      res.redirect("/weather/fiveDay");
+    } else {
+      const { name: city, main: { temp, humidity, pressure }, weather, sys: { sunrise, sunset } } = data;
+      const icon = weather[0].icon;
+      res.redirect(`/weather/show?city=${encodeURIComponent(city)}&temp=${temp}&desc=${encodeURIComponent(weather[0].description)}&humidity=${humidity}&pressure=${pressure}&sunrise=${sunrise}&sunset=${sunset}&icon=${icon}`);
+    }
   } catch (error) {
-    // Send an error message if the weather data is not found
-    res.send('Weather data not found, please try another zip code.');
+    res.status(500).send("Failed to retrieve weather data");
   }
 });
 
-// Define a route handler for the "/weather/show" GET request
 app.get('/weather/show', (req, res) => {
-  // Retrieve the query parameters from the request
-  const { city, temp, desc } = req.query;
-
-  // Check if any of the required parameters are missing
-  if (!city || !temp || !desc) {
-    // Return a 404 status code and an error message if required data is missing
+  const { city, temp, desc, humidity, pressure, sunrise, sunset, icon } = req.query;
+  if (!city || !temp || !desc || !humidity || !pressure || !sunrise || !sunset || !icon) {
     return res.status(404).send("Required data is missing");
   }
+  res.render('weather/show', { city, temp, desc, humidity, pressure, sunrise, sunset, icon });
+});
 
-  // Render the "weather/show" view and pass the retrieved data to the EJS template
-  res.render('weather/show', { city, temp, desc });
+app.get('/weather/fiveDay', (req, res) => {
+  const data = req.session.weatherData;
+  if (!data) {
+    return res.status(404).send("Weather data not found");
+  }
+  const today = new Date();
+  const fiveDaysLater = new Date(today);
+  fiveDaysLater.setDate(today.getDate() + 5);
+
+  const filteredForecast = data.list.filter(forecast => {
+    const forecastDate = new Date(forecast.dt * 1000);
+    return forecastDate.toDateString() !== fiveDaysLater.toDateString();
+  });
+
+  const forecastByDate = {};
+  filteredForecast.forEach(forecast => {
+    const date = new Date(forecast.dt * 1000).toLocaleDateString();
+    if (!forecastByDate[date]) {
+      forecastByDate[date] = forecast;
+    }
+  });
+
+  res.render('weather/fiveDay', { forecastByDate: forecastByDate, city: data.city.name });
 });

@@ -1,15 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Weather App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
+    <title>Weather App</title>
 </head>
 <body>
-  <h1>Enter Your Zip Code</h1>
-  <form action="/weather" method="POST">
-    <input type="text" name="zipcode" placeholder="Zip Code" required>
-    <button type="submit">Get Weather</button>
-  </form>
+    <div class="container">
+        <h1>Weather App</h1>
+        <h2>Enter Your Zip Code</h1>
+        <form action="/weather" method="POST">
+            <input type="text" name="zipcode" placeholder="Zip Code" required>
+            <div>
+                <input type="radio" id="current" name="forecast_type" value="current" checked>
+                <label for="current">Current Weather</label>
+                <input type="radio" id="five_day" name="forecast_type" value="five_day">
+                <label for="five_day">5-Day Forecast</label>
+            </div>
+            <button type="submit">Get Weather</button>
+        </form>
+    </div>
 </body>
 </html>
